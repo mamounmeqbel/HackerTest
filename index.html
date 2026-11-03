@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تنبيه أمني!</title>
+    <style>
+        /* إخفاء شريط التمرير ومنع أي تصفح خارجي */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden; /* إخفاء السكرول بار */
+            background-color: #000;
+            color: #ff0000;
+            font-family: 'Courier New', Courier, monospace;
+            user-select: none;
+            box-sizing: border-box;
+        }
+        
+        /* واجهة اللمس الأولى المخصصة للهواتف */
+        #touch-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            cursor: pointer;
+        }
+        
+        #touch-overlay p {
+            font-size: 20px;
+            color: #fff;
+            animation: blink 1.5s infinite;
+        }
+
+        #content {
+            display: none;
+            text-align: center;
+            padding-top: 30%;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .loading-bar {
+            width: 80%;
+            background-color: #222;
+            margin: 20px auto;
+            border: 2px solid #ff0000;
+            height: 25px;
+            position: relative;
+        }
+        .progress {
+            width: 0%;
+            height: 100%;
+            background-color: #ff0000;
+            transition: width 0.1s;
+        }
+        #warning-text {
+            font-size: 22px;
+            font-weight: bold;
+            padding: 0 10px;
+        }
+        .close-btn {
+            display: none;
+            margin-top: 30px;
+            padding: 12px 24px;
+            background-color: #ff0000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 5px;
+        }
+
+        @keyframes blink {
+            0% { opacity: 0.2; }
+            50% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شاشة اللمس الأولى لتفعيل الـ Fullscreen إجبارياً بعد تفاعل المستخدم -->
+    <div id="touch-overlay" onclick="startSimulation()">
+        <p>اضغط هنا للتفاعل والاجابة على سؤال الورشة...</p>
+    </div>
+
+    <div id="content">
+        <p id="warning-text">جاري مسح الذاكرة وتشفير الهاتف (Format)...</p>
+        <div class="loading-bar">
+            <div id="progress-bar" class="progress"></div>
+        </div>
+        <p id="status">النسبة: <span id="percent">0</span>%</p>
+        <button id="close-btn" class="close-btn" onclick="exitSimulation()"> ⚠️اضغط هنا للخروج بأمان   </button>
+    </div>
+
+    <script>
+        function startSimulation() {
+            // تفعيل وضع ملء الشاشة الكاملة وإخفاء أشرطة المتصفح
+            const docElm = document.documentElement;
+            if (docElm.requestFullscreen) {
+                docElm.requestFullscreen();
+            } else if (docElm.mozRequestFullScreen) { /* Firefox */
+                docElm.mozRequestFullScreen();
+            } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                docElm.webkitRequestFullscreen();
+            } else if (docElm.msRequestFullscreen) { /* IE/Edge */
+                docElm.msRequestFullscreen();
+            }
+
+            // إخفاء طبقة اللمس وإظهار الخدعة
+            document.getElementById('touch-overlay').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+
+            // تشغيل العداد
+            startCounter();
+                
+        }
+
+        function startCounter() {
+            let percent = 0;
+            const progressBar = document.getElementById('progress-bar');
+            const percentText = document.getElementById('percent');
+            const warningText = document.getElementById('warning-text');
+            const closeBtn = document.getElementById('close-btn');
+
+            const interval = setInterval(() => {
+                if (percent >= 100) {
+                    clearInterval(interval);
+                    warningText.innerHTML = "⚠️ تم اختراقك توعوياً! <br><br> هذا مجرد اختبار تفاعلي في الورشة لبيان خطورة مسح الرموز المجهولة.<br><br> مع تحيات منسق المشاريع / أ. مأمون مقبل";
+                    warningText.style.color = "#00ff00";
+
+warningText.innerHTML = "🔒 تم اختراقك توعوياً بنجاح!<br><br>هذه محاكاة تفاعلية مخصصة لورشة المواطنة الرقمية  لإثبات كيف يمكن اختراق هاتفك بخداع المستخدم.<br><br><span style='color: #fff; font-size: 18px;'>مع تحياتي/ أ. مأمون مقبل</span>";
+
+
+
+                     closeBtn.style.display = "inline-block";
+                } else {
+                    percent++;
+                    progressBar.style.width = percent + '%';
+                    percentText.innerText = percent;
+                }
+            }, 60); 
+        }
+
+        function exitSimulation() {
+            // الخروج من وضع ملء الشاشة والتحويل لجوجل
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+            window.location.href = "https://google.com";
+        }
+    </script>
+</body>
+</html>
